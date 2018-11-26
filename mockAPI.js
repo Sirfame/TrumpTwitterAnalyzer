@@ -56,6 +56,12 @@ app.post('/api/v1/users', function(req, res) {
   res.json({message: 'new user created'});
 });
 
+app.post('/msapi/sentiment', function(req, res) {
+  console.log(req.body);
+  console.log("/////////////////: Called Mock Sentiment Analysis API");
+  res.json('{"documents":[]}');
+});
+
 //Listen for HTTP request on port 80
 app.listen(8000, function() {
   console.log('Server is listening');
