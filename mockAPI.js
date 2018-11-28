@@ -59,10 +59,11 @@ app.post('/api/v1/users', function(req, res) {
 app.post('/msapi/sentiment', function(req, res) {
   console.log(req.body);
   console.log("/////////////////: Called Mock Sentiment Analysis API");
-  res.json('{"documents":[]}');
+  res.set('Content-Type', 'text/html')
+  res.send('{"documents":[]}');
 });
 
 //Listen for HTTP request on port 80
-app.listen(8000, function() {
-  console.log('Server is listening');
+var listener = app.listen(8000, function() {
+  console.log('Server is listening on port ' + listener.address().port);
 });

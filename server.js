@@ -40,6 +40,15 @@ getTweets().then(function(tweets) {
     return JSON.parse(newTweetScores)
 }).then(function(jsonScores) {
     console.log('/////////////////: Adding to Redis')
+    console.log(jsonScores)
+    var redisClient = redis.createClient({
+        port : global.gConfig.redis_config_values.port,
+        host : global.gConfig.redis_config_values.host,
+        password : global.gConfig.redis_config_values.password
+    });
+    redisClient.on('connect', function() {
+        console.log('Redis client connected');
+    });   
     for(var i = 0; i < jsonScores['documents'].length; i++) {
         redisClient.set(jsonScores['documents'][i]['id'], JSON.stringify({
             "score" : jsonScores['documents'][i]['score'],
