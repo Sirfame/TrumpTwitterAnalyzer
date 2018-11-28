@@ -22,3 +22,4 @@ bin-release/
 config.json
 playground/
 node_modules/
+dump.rdb

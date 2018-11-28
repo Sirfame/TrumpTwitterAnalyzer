@@ -37,7 +37,7 @@ app.use(function(req, res, next) {
 //   res.send(new Date());
 // });
 
-app.get('/api/v1/users', function(req, res) {
+app.get('/twitterapi/usertimeline', function(req, res) {
   var users = [
     {
       email: 'test@test.com',
@@ -60,7 +60,16 @@ app.post('/msapi/sentiment', function(req, res) {
   console.log(req.body);
   console.log("/////////////////: Called Mock Sentiment Analysis API");
   res.set('Content-Type', 'text/html')
-  res.send('{"documents":[]}');
+  //res.send('{"documents":[]}');
+  var sampleResponse = { documents:
+    [ { id: '1067775488112902100', score: 0.21074026823043823 },
+      { id: '1067775425647136800', score: 0.5 },
+      { id: '1067775315487924200', score: 0.5 },
+      { id: '1067775191487533000', score: 0.5 },
+      { id: '1067775022331236400', score: 0.7884500026702881 },
+      { id: '1067624656943935500', score: 0.9560350775718689 } ],
+   errors: [] };
+  res.send(JSON.stringify(sampleResponse))
 });
 
 //Listen for HTTP request on port 80
