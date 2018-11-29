@@ -4,7 +4,7 @@ var express = require('express');
 var redis = require('redis')
 
 // environment variables
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'staging';
 
 // config variables
 const config = require('./config/config.js');

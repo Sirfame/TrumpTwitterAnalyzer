@@ -2,12 +2,20 @@
 
 var Twitter = require('twitter');
 
+let https;
+if(process.env.NODE_ENV === 'staging') {
+    https = require ('https');
+} else {
+    https = require('http')
+}
+
 //////////////////////////////////
 // Connect to Twitter
 //////////////////////////////////
 
 module.exports = {
     getTweets() {
+
         var client = new Twitter({
             consumer_key: global.gConfig.twitter_config_values.consumer_key,
             consumer_secret: global.gConfig.twitter_config_values.consumer_secret,
