@@ -1,9 +1,10 @@
 'use strict';
 
 //require the express module
-var express = require('express');
-var morgan = require('morgan');
+var express    = require('express');
+var morgan     = require('morgan');
 var bodyParser = require('body-parser');
+var fs         = require('fs');
 
 //create a new express application
 var app = express();
@@ -25,36 +26,25 @@ app.use(function(req, res, next) {
   next();
 });
 
-// //Call this function for GET on /
-// app.get('/', function(req, res) {
-//   res.setHeader('Content-type', 'text/plain');
-//   res.send('Hello World!');
-// });
-//
-// //Call this function for GET on /time
-// app.get('/time', function(req, res) {
-//   res.setHeader('Content-type', 'text/plain');
-//   res.send(new Date());
-// });
 
-app.get('/twitterapi/usertimeline', function(req, res) {
-  var users = [
-    {
-      email: 'test@test.com',
-      displayName: 'Test user'
-    },
-    {
-      email: 'test2@test.com',
-      displayName: 'Test user2'
-    }
-  ];
-  res.json(users);
+//////////////////////////////////
+// Mock Twitter API routes
+//////////////////////////////////
+
+app.get('/mocktwitterapi/usertimeline', function(req, res) {
+  fs.readFile('./mockTweetData.txt', 'utf8', function(err, contents) {
+    //var tweets = JSON.parse(contents);
+    res.send(contents);
+  });
 });
 
-app.post('/api/v1/users', function(req, res) {
-  console.log(req.body);
-  res.json({message: 'new user created'});
+app.post('/mocktwitterapi/oauth2token', function(req, res) {
+  res.send(JSON.stringify('bearertoken'));
 });
+
+//////////////////////////////////
+// Mock Microsoft API routes
+//////////////////////////////////
 
 app.post('/msapi/sentiment', function(req, res) {
   console.log(req.body);
@@ -76,3 +66,21 @@ app.post('/msapi/sentiment', function(req, res) {
 var listener = app.listen(8000, function() {
   console.log('Server is listening on port ' + listener.address().port);
 });
+
+
+
+// //Call this function for GET on /
+// app.get('/', function(req, res) {
+//   res.setHeader('Content-type', 'text/plain');
+//   res.send('Hello World!');
+// });
+//
+// //Call this function for GET on /time
+// app.get('/time', function(req, res) {
+//   res.setHeader('Content-type', 'text/plain');
+//   res.send(new Date());
+// });
+// app.post('/api/v1/users', function(req, res) {
+//   console.log(req.body);
+//   res.json({message: 'new user created'});
+// });
