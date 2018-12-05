@@ -1,6 +1,6 @@
 'use strict';
 
-let https;
+var https;
 if(process.env.NODE_ENV === 'staging') {
     https = require ('https');
 } else {
