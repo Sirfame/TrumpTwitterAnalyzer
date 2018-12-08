@@ -4,7 +4,7 @@ var express = require('express');
 var redis = require('redis')
 
 // environment variables
-process.env.NODE_ENV = 'staging';
+process.env.NODE_ENV = 'development';
 
 // config variables
 const config = require('./config/config.js');
@@ -32,7 +32,6 @@ getTweets().then(function(tweets) {
         return '{"documents":[]}';
     }
     console.log('/////////////////: Calling Sentiment Analysis API')
-    console.log(filteredTweets)
     return getSentiment(newTweets);
 }).then(function(newTweetScores) {
     console.log('/////////////////: Parsing JSON')
@@ -50,6 +49,7 @@ getTweets().then(function(tweets) {
         console.log('Redis client connected');
     });   
     for(var i = 0; i < jsonScores['documents'].length; i++) {
+        console.log("jsonscoreID" + jsonScores['documents'][i]['id']);
         redisClient.set(jsonScores['documents'][i]['id'], JSON.stringify({
             "score" : jsonScores['documents'][i]['score'],
             "text" : filteredTweets[jsonScores['documents'][i]['id']]['text'],

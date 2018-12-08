@@ -26,10 +26,9 @@ var port = global.gConfig.twitter_config_values.port;
 var encodedConsumerKey = encodeURIComponent(consumer_key);
 var encodedConsumerSecret = encodeURIComponent(consumer_secret);
 
-var getBearerToken = function (cb) {
-    var fullBearerTokenResponse;
-    var bearerTokenRequestBody = "grant_type=client_credentials";
-    var bearerTokenRequestParams = {
+var twitterBearerToken = new Promise(function(resolve, reject) {
+    var body = "grant_type=client_credentials";
+    var request_params = {
         method : 'POST',
         hostname : uri,
         path: oauthPath,
@@ -37,71 +36,91 @@ var getBearerToken = function (cb) {
         headers : {
             'Authorization' : 'Basic ' + Buffer.from(encodedConsumerKey  + ":" +  encodedConsumerSecret).toString('base64'),
             'Content-Type' : 'application/x-www-form-urlencoded;charset=UTF-8',
-            'Content-Length' : bearerTokenRequestBody.length,
-        }
-    }
-    if(process.env.NODE_ENV == 'staging') {
-        delete bearerTokenRequestParams.port;
-    }
-    try{
-        let bearerTokenRequest = https.request(bearerTokenRequestParams, function(response) {
-            console.log(response.statusCode);
-            console.log(response)
-            let res = '';
-            response.on('data', function(d) {
-                res += d;
-            });
-            response.on('end', function() {
-                let body__ = JSON.stringify (res, null, '  ');
-                fullBearerTokenResponse = JSON.parse(res);
-                cb(fullBearerTokenResponse);
-            });
-
-        }).on('error', function(e) {
-            console.error('Error: ' + e.message);
-        })    
-        bearerTokenRequest.write(bearerTokenRequestBody);
-        bearerTokenRequest.end();
-    } catch(err) {
-        console.error(err.message)
-    }
-}
-
-var getTwitterTimeline = function (fullBearerTokenResponse) {
-    bearerToken = fullBearerTokenResponse['access_token'];     
-    var request_params = {
-        method : 'GET',
-        host : uri,
-        path : timelinePath,
-        port : port,
-        headers : {
-            'Authorization' : 'Bearer ' + bearerToken
+            'Content-Length' : body.length,
         }
     }
     if(process.env.NODE_ENV == 'staging') {
         delete request_params.port;
     }
-    var request = https.request(request_params, function(response) {
-        var res = '';
+    let req = https.request(request_params, function(response) {
+        let res = '';
         response.on('data', function(d) {
             res += d;
         });
         response.on('end', function() {
-            // let body = JSON.parse(res);
-            //let res_ = JSON.stringify(res, null, '  ');
-            return res;
+            let body__ = JSON.stringify (res, null, '  ');
+            resolve(JSON.parse(res));
         });
         response.on('error', function(e) {
             console.log('Error: ' + e.message);
-        });
+            reject(Error('Error: ' + e.message))
+        })
+    
     });
-    request.end();            
+    req.write(body);
+    req.end();    
+});
+
+var timelineAPICall = function(fullBearerTokenResponse) {
+    //var parsedJSON = JSON.parse(fullBearerTokenResponse)
+    var bearerToken = fullBearerTokenResponse['access_token']
+    return new Promise(function(resolve, reject) {
+        var request_params = {
+            method : 'GET',
+            host : uri,
+            path : timelinePath,
+            port : port,
+            headers : {
+                'Authorization' : 'Bearer ' + bearerToken
+            }
+        }
+        if(process.env.NODE_ENV == 'staging') {
+            delete request_params.port;
+        }
+        var request = https.request(request_params, function(response) {
+            var res = '';
+            response.on('data', function(d) {
+                res += d;
+            });
+            response.on('end', function() {
+                // let body = JSON.parse(res);
+                //let res_ = JSON.stringify(res, null, '  ');
+                resolve(res);
+            });
+            response.on('error', function(e) {
+                reject(Error('Error: ' + e.message))
+            });
+        });
+        request.end();
+    
+    });
 }
+
+
 
 module.exports = {
     getTweets() {
-        return new Promise(function(resolve, reject) {           
-            
-        });               
-    }    
+        return new Promise(function(resolve, reject) {
+            twitterBearerToken.then(function(bearerToken) {
+                return timelineAPICall(bearerToken);
+            }).then(function(response) {
+                var jsonResponse = JSON.parse(response)
+                var filteredTweets = {}
+                for(var i = 0; i < jsonResponse.length; i++) {
+                    filteredTweets[jsonResponse[i].id] = {
+                        'tweetID' : '' + jsonResponse[i].id,
+                        'text' : jsonResponse[i].full_text,
+                        'created' : jsonResponse[i].created_at
+                    }
+                }
+                for(var id in filteredTweets) {
+                    var tweet = filteredTweets[id];
+                    console.log(tweet)
+                }
+                resolve(filteredTweets);
+            }).catch(function(err) {
+                reject(Error("Error " + err));
+            });
+        });
+    }
 }

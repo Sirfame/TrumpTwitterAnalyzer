@@ -124,5 +124,4 @@ twitterBearerToken.then(function(bearerToken) {
     }
 }).catch(function(err) {
     console.log(err);
-
 });
