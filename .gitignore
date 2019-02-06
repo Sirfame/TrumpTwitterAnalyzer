@@ -3,6 +3,7 @@ bin-debug/
 bin-release/
 [Oo]bj/
 [Bb]in/
+brokenclient/
 
 # Other files and folders
 .settings/
