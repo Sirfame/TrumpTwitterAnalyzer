@@ -46,13 +46,14 @@ app.get('/posts', (req, res) => {
     if(err) console.error(err)
     for(var i = 0; i < keys.length; i++) {
       tweetPromiseArray.push(redisClient.getAsync(keys[i]).then(JSON.parse).then(function(val) {
-        return val.text;
+        return val;
       }));
     }
     Promise.all(tweetPromiseArray).then(function(data){
       for(var i = 0; i < data.length; i++) {
         tweets.push({
-          'title': data[i]
+          'title': data[i].text,
+          'score': data[i].score
         });
       }
       return tweets;

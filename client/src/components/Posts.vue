@@ -1,10 +1,10 @@
 <template>
   <div class="posts">
-    <h1>Posts</h1>
+    <h1>Tweets</h1>
     <div id="tweets" v-for="post in posts">
       <p>
         <span><b>{{ post.title }}</b></span><br />
-        <span>{{ post.description }}</span>
+        <span>{{ post.score }}</span>
       </p>
     </div>
   </div>
