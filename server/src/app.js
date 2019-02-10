@@ -49,15 +49,22 @@ app.get('/posts', (req, res) => {
   redisClient.keys('*', function (err, keys) {
     if(err) console.error(err)
 
-    for(var i = 0; i < keys.length; i++) {
-      console.log(keys[i])
-      redisClient.getAsync(keys[i]).then(JSON.parse).then( function(val) {
-        console.log(val.text);
-      })
-    }
-    res.send([{
-      title: keys
-    }]);
+    var pm = new Promise(function(resolve, reject) {
+        for(var i = 0; i < keys.length; i++) {
+          console.log(keys[i])
+          redisClient.getAsync(keys[i]).then(JSON.parse).then(function(val) {
+            console.log(val.text);
+            tweets.push(val.text);
+          });
+        }
+        resolve(tweets);
+    })
+    pm.then(function(tweets) {
+      res.send([{
+        title: tweets
+      }]);
+    })
+
   
     
     

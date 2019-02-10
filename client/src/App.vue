@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <img src="./assets/logo.png">
     <Posts msg="Welcome to Your Vue.js App"/>
     
   </div>
