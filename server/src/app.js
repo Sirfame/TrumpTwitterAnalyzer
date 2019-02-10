@@ -6,7 +6,7 @@ const redis = require("redis")
 const bluebird = require('bluebird')
     
 // environment variables
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'staging';
 
 // config variables
 const config = require('../config/config.js');
@@ -39,35 +39,26 @@ var redisCall = function(client) {
 }
 
 app.get('/posts', (req, res) => {
-  // res.send(
-  //   [{
-  //     title: "Hello World!",
-  //     description: "Hi there! How are you?"
-  //   }]
-  // )
-  var tweets = [];  
+
+  var tweetPromiseArray = [];  
+  var tweets = [{}];
   redisClient.keys('*', function (err, keys) {
     if(err) console.error(err)
-
-    var pm = new Promise(function(resolve, reject) {
-        for(var i = 0; i < keys.length; i++) {
-          console.log(keys[i])
-          redisClient.getAsync(keys[i]).then(JSON.parse).then(function(val) {
-            console.log(val.text);
-            tweets.push(val.text);
-          });
-        }
-        resolve(tweets);
+    for(var i = 0; i < keys.length; i++) {
+      tweetPromiseArray.push(redisClient.getAsync(keys[i]).then(JSON.parse).then(function(val) {
+        return val.text;
+      }));
+    }
+    Promise.all(tweetPromiseArray).then(function(data){
+      for(var i = 0; i < data.length; i++) {
+        tweets.push({
+          'title': data[i]
+        });
+      }
+      return tweets;
+    }).then(function(val) {
+      res.send(val);
     })
-    pm.then(function(tweets) {
-      res.send([{
-        title: tweets
-      }]);
-    })
-
-  
-    
-    
   });
 });  
 

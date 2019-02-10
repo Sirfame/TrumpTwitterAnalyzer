@@ -1,9 +1,7 @@
 <template>
   <div class="posts">
     <h1>Posts</h1>
-    This file will list all the posts.
-
-    <div v-for="post in posts">
+    <div id="tweets" v-for="post in posts">
       <p>
         <span><b>{{ post.title }}</b></span><br />
         <span>{{ post.description }}</span>
@@ -32,3 +30,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+#tweets {
+  width: 40%;
+  padding-left: 30%;
+  padding-right: 30%;
+  text-align: left;
+}
+</style>

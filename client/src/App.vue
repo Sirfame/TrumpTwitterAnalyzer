@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <Posts msg="Welcome to Your Vue.js App"/>
+    <Posts msg="Welcome to the Donald Trump Tweets Analyzer"/>
     
   </div>
 </template>
