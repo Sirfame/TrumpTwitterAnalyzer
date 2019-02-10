@@ -5,11 +5,22 @@ const morgan = require('morgan')
 const redis = require("redis")
 const bluebird = require('bluebird')
     
+// environment variables
+process.env.NODE_ENV = 'development';
 
+// config variables
+const config = require('../config/config.js');
 
 bluebird.promisifyAll(redis);
 const app = express()
-const redisClient = redis.createClient();
+const redisClient = redis.createClient({
+  port : global.gConfig.redis_config_values.port,
+  host : global.gConfig.redis_config_values.host,
+  password : global.gConfig.redis_config_values.password
+});
+redisClient.on('connect', function() {
+  console.log('Redis client connected');
+});   
 
 
 app.use(morgan('combined'))
@@ -20,33 +31,10 @@ redisClient.on("error", function (err) {
   console.log("Error " + err);
 });
 
-redisClient.on('connect', function() {
-  console.log('Redis client connected');
-});
-
 var redisCall = function(client) {  
   return new Promise(function(resolve, reject) {      
       client.get()
   
-  });
-}
-
-app.get('/tweets', (req, res) => {
-  res.send('test');
-});
-
-function getFromRedis(client, key) {
-  return new Promise(function(resolve, reject) {
-    redisClient.keys('*', function (err, keys) {
-      if(err) reject(err);
-      var tweets = [];
-      for(key in keys) {
-        
-      }
-
-
-
-    });
   });
 }
 
