@@ -1,8 +1,8 @@
 <template>
   <div class="posts">
     <h1>Tweets</h1>
-    <div id="tweets" v-for="post in posts">
-      <p>
+    <div v-for="post in posts">
+      <p id="tweets">
         <span><b>{{ post.title }}</b></span><br />
         <span>{{ post.score }}</span>
       </p>
