@@ -2,17 +2,17 @@
   <div id="app">
     <img src="./assets/logo.png">
     <Posts msg="Welcome to the Donald Trump Tweets Analyzer"/>
-    
   </div>
 </template>
 
 <script>
 import Posts from './components/Posts.vue'
-
+import Tests from './components/Test.vue'
 export default {
   name: 'app',
   components: {
-    Posts
+    Posts,
+    Tests
   }
 }
 </script>

@@ -6,7 +6,7 @@ const redis = require("redis")
 const bluebird = require('bluebird')
     
 // environment variables
-process.env.NODE_ENV = 'staging';
+process.env.NODE_ENV = 'development';
 
 // config variables
 const config = require('../config/config.js');
@@ -30,13 +30,6 @@ app.use(cors())
 redisClient.on("error", function (err) {
   console.log("Error " + err);
 });
-
-var redisCall = function(client) {  
-  return new Promise(function(resolve, reject) {      
-      client.get()
-  
-  });
-}
 
 app.get('/posts', (req, res) => {
 

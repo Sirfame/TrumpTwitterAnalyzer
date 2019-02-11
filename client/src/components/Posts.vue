@@ -19,14 +19,14 @@ export default {
       posts: []
     }
   },
-  mounted () {
-    this.getPosts()
-  },
   methods: {
     async getPosts () {
       const response = await PostsService.fetchPosts()
       this.posts = response.data
     }
+  },
+  mounted () {
+    this.getPosts()
   }
 }
 </script>
